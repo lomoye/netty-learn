@@ -37,6 +37,11 @@ public class MultiplexerTimeServer implements Runnable {
         }
     }
 
+    public static void main(String[] args) {
+        MultiplexerTimeServer server = new MultiplexerTimeServer(8080);
+        new Thread(server, "nio-server-001").start();
+    }
+
     @Override
     public void run() {
         while (!stop) {
