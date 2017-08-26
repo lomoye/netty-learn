@@ -1,4 +1,4 @@
-package com.lomoye.nettylearn;
+package com.lomoye.nettylearn.nio1;
 
 import java.io.BufferedReader;
 import java.io.IOException;
