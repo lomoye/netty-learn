@@ -14,16 +14,17 @@ import java.util.Date;
  */
 public class TimeServerHandler extends SimpleChannelInboundHandler {
 
+    private long count;
+
+    private String sp = System.getProperty("line.separator");
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] req = new byte[buf.readableBytes()];
-        buf.readBytes(req);
+        String body = (String) msg;
 
-        String body = new String(req, "UTF-8");
-
-        System.out.println("时间服务器收到数据:" + body);
+        System.out.println("时间服务器收到数据:" + body + "|" + ++count);
         String currentTime = "QT".equalsIgnoreCase(body) ? new Date().toString() : "BAD ORDER";
+        currentTime += sp;
 
         ByteBuf resp = Unpooled.copiedBuffer(currentTime.getBytes());
         ctx.writeAndFlush(resp);
