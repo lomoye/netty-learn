@@ -8,14 +8,16 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 
 /**
  * Created by lomoye on 2017/8/26.
- * 基于netty的时间客户端
+ *
  */
-public class TimeClient {
+public class EchoClient {
     public void connect(int port, String host) throws InterruptedException {
         //配置客户端nio线程组
         EventLoopGroup group = new NioEventLoopGroup();
@@ -28,9 +30,13 @@ public class TimeClient {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new LineBasedFrameDecoder(1024),
-                                    new StringDecoder(),
-                                    new TimeClientHandler());
+                            ch.pipeline().addLast(
+                                    new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2),//todo 参数是什么意思
+                                    new LengthFieldPrepender(2),
+                                    new MsgPackDecoder(),
+                                    new MsgpackEncoder(),
+                                    new EchoClientHandler()
+                            );
                         }
                     });
 
@@ -43,7 +49,7 @@ public class TimeClient {
 
 
     public static void main(String[] args) throws InterruptedException {
-        new TimeClient().connect(8080, "127.0.0.1");
+        new EchoClient().connect(8080, "127.0.0.1");
     }
 
 }

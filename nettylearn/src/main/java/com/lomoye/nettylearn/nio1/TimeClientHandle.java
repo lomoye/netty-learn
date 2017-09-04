@@ -39,7 +39,7 @@ public class TimeClientHandle implements Runnable {
     }
 
     public static void main(String[] args) {
-        new Thread(new TimeClientHandle("127.0.0.1", 8080), "TimeClient-001").start();
+        new Thread(new TimeClientHandle("127.0.0.1", 8080), "EchoClient-001").start();
     }
 
 

@@ -4,6 +4,8 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 
@@ -11,10 +13,10 @@ import io.netty.handler.codec.string.StringDecoder;
  * Created by lomoye on 2017/8/26.
  * 基于netty实现的时间服务器
  */
-public class TimeServer {
+public class EchoServer {
 
     public static void main(String[] args) throws Exception {
-        new TimeServer().bind(8080);
+        new EchoServer().bind(8080);
     }
 
 
@@ -45,9 +47,9 @@ public class TimeServer {
 
         @Override
         protected void initChannel(Channel ch) throws Exception {
-            ch.pipeline().addLast(new LineBasedFrameDecoder(1024),
-                    new StringDecoder(),
-                    new TimeServerHandler());
+            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2),//todo 参数是什么意思
+                    new LengthFieldPrepender(2), new MsgpackEncoder(), new MsgPackDecoder(),
+                    new EchoServerHandler());
         }
     }
 }
